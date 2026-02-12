@@ -35,3 +35,4 @@ build/
 
 .yml
 mvnw*
+/TicketReceiver/src/main/resources/application.yaml
