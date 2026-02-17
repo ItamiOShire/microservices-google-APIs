@@ -2,8 +2,10 @@ package com.helpdesk.notificationserver.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 @Getter
+@Component
 public class EmailData {
 
     private final String fromAddressEmail = "cindefoftwoworldsflames.gm@gmail.com";
