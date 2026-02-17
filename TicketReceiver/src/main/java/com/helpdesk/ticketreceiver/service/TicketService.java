@@ -33,9 +33,9 @@ public class TicketService {
 
         Mono<Ticket> savedTicket = ticketRepository.save(ticket)
                 .doOnSuccess( t -> LOGGER.info("Zapisano ticket o id {}", t.getId()))
-                .flatMap( t -> Mono.fromFuture(pubSubTemplate.publish(TOPIC_NAME, t.getId()))
+                .flatMap( t -> Mono.fromFuture(pubSubTemplate.publish(TOPIC_NAME, t.getEmail()))
                         .thenReturn(t))
-                .doOnSuccess( t -> LOGGER.info("Opublikowano temat z wiadomością - {}", t.getId()));
+                .doOnSuccess( t -> LOGGER.info("Opublikowano temat z wiadomością - {}", t.getEmail()));
 
         return savedTicket;
     }
