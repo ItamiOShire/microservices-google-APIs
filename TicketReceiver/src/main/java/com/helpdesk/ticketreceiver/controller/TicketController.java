@@ -1,7 +1,5 @@
 package com.helpdesk.ticketreceiver.controller;
 
-
-import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import com.helpdesk.ticketreceiver.datamodel.Ticket;
 import com.helpdesk.ticketreceiver.dto.TicketDto;
 import com.helpdesk.ticketreceiver.service.TicketService;
