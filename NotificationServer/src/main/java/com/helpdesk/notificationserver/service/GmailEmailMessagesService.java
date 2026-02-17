@@ -17,7 +17,7 @@ import java.util.Properties;
 @Service
 public class GmailEmailMessagesService {
 
-    private static MimeMessage createEmailContent(
+    private MimeMessage createEmailContent(
             EmailData emailData
     ) throws MessagingException {
 
@@ -34,7 +34,7 @@ public class GmailEmailMessagesService {
         return email;
     }
 
-    private static Message encodeEmailContent(MimeMessage email)
+    private Message encodeEmailContent(MimeMessage email)
         throws MessagingException, IOException {
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -47,7 +47,7 @@ public class GmailEmailMessagesService {
         return message;
     }
 
-    public static Message CreateAndEncodeEmail(
+    public Message createAndEncodeEmail(
             EmailData emailData
     ) throws MessagingException, IOException {
         return encodeEmailContent(
