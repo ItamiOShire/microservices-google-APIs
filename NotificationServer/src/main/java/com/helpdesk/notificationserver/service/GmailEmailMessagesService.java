@@ -2,6 +2,7 @@ package com.helpdesk.notificationserver.service;
 
 import com.google.api.services.gmail.model.Message;
 
+import com.helpdesk.notificationserver.dto.EmailData;
 import jakarta.mail.*;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
@@ -17,10 +18,7 @@ import java.util.Properties;
 public class GmailEmailMessagesService {
 
     private static MimeMessage createEmailContent(
-            String fromEmailAddress,
-            String toEmailAddress,
-            String subject,
-            String content
+            EmailData emailData
     ) throws MessagingException {
 
         Properties props = new Properties();
@@ -28,10 +26,10 @@ public class GmailEmailMessagesService {
 
         MimeMessage email = new MimeMessage(session);
 
-        email.setFrom(fromEmailAddress);
-        email.addRecipients(jakarta.mail.Message.RecipientType.TO, toEmailAddress);
-        email.setSubject(subject);
-        email.setText(content);
+        email.setFrom(emailData.getFromAddressEmail());
+        email.addRecipients(jakarta.mail.Message.RecipientType.TO, emailData.getToAddressEmail());
+        email.setSubject(emailData.getSubject());
+        email.setText(emailData.getContent());
 
         return email;
     }
@@ -50,14 +48,11 @@ public class GmailEmailMessagesService {
     }
 
     public static Message CreateAndEncodeEmail(
-            String toAddressEmail
+            EmailData emailData
     ) throws MessagingException, IOException {
         return encodeEmailContent(
                 createEmailContent(
-                        "test",
-                        "test",
-                        "test",
-                        "test"
+                        emailData
                 )
         );
     }
