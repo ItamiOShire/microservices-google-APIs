@@ -11,13 +11,18 @@ import javax.annotation.PostConstruct;
 public class NotificationSubHandler {
 
     private final PubSubTemplate pubSubTemplate;
+    private final GmailApiService gmailApiService;
     private static final String TOPIC_NAME = System.getenv("topic_name");
     private final EmailData emailData;
 
     @Autowired
-    NotificationSubHandler(PubSubTemplate pubSubTemplate, EmailData emailData) {
+    NotificationSubHandler(
+            PubSubTemplate pubSubTemplate,
+            EmailData emailData,
+            GmailApiService gmailApiService) {
         this.pubSubTemplate = pubSubTemplate;
         this.emailData = emailData;
+        this.gmailApiService = gmailApiService;
     }
 
 
@@ -27,6 +32,7 @@ public class NotificationSubHandler {
         pubSubTemplate.subscribe(TOPIC_NAME, message -> {
             String toEmail = message.getPubsubMessage().getData().toStringUtf8();
             emailData.setToAddressEmail(toEmail);
+            gmailApiService.sendEmail(emailData);
         });
 
     }
