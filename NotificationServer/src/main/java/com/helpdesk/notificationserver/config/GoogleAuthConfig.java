@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GoogleAuthConfig {
 
-    private final String clientId = System.getenv("client+id");
-    private final String clientSecret = System.getenv("client_secret");
-    private final String refreshToken = System.getenv("refresh_token");
+    private final String clientId = System.getenv("CLIENT-ID");
+    private final String clientSecret = System.getenv("CLIENT-SECRET");
+    private final String refreshToken = System.getenv("REFRESH-TOKEN");
 
     @Bean
     public GoogleCredentials googleCredentials() {

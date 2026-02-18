@@ -18,7 +18,7 @@ public class TicketService {
 
     private final TicketRepository ticketRepository;
     private final PubSubTemplate pubSubTemplate;
-    private static final String TOPIC_NAME = System.getenv("topicName");
+    private static final String TOPIC_NAME = System.getenv("TICKET-TOPIC-NAME");
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketService.class);
 
     @Autowired
