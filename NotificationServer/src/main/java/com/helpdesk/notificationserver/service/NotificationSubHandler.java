@@ -12,7 +12,7 @@ public class NotificationSubHandler {
 
     private final PubSubTemplate pubSubTemplate;
     private final GmailApiService gmailApiService;
-    private static final String TOPIC_NAME = System.getenv("topic_name");
+    private static final String NOTIFICATION_SUB_NAME = System.getenv("NOTIFICATION-SUB-NAME");
     private final EmailData emailData;
 
     @Autowired
@@ -29,7 +29,7 @@ public class NotificationSubHandler {
     @PostConstruct
     public void subscribe() {
 
-        pubSubTemplate.subscribe(TOPIC_NAME, message -> {
+        pubSubTemplate.subscribe(NOTIFICATION_SUB_NAME, message -> {
             String toEmail = message.getPubsubMessage().getData().toStringUtf8();
             emailData.setToAddressEmail(toEmail);
             gmailApiService.sendEmail(emailData);
