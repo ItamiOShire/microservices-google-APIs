@@ -4,3 +4,9 @@ variable "zone" {}
 variable "ticket-topic" {}
 variable "notification-sub" {}
 variable "ticket-process-sub" {}
+variable "sa-id" {}
+variable "ticket-receiver-image-name" {}
+variable "notification-server-image-name" {}
+variable "client-id" {}
+variable "client-secret" {}
+variable "refresh-token" {}
