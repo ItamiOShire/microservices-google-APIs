@@ -120,3 +120,29 @@ resource "google_compute_instance" "vm-notification-server" {
   }
 
 }
+
+# IAM
+
+resource "google_project_iam_member" "firestore-iam" {
+  member = "serviceAccount:${google_service_account.helpdesk_sa.email}"
+  project = var.project-id
+  role = "roles/firebase.admin"
+}
+
+resource "google_project_iam_member" "pubsub-iam-sub" {
+  member  = "serviceAccount:${google_service_account.helpdesk_sa.email}"
+  project = var.project-id
+  role    = "roles/pubsub.subscriber"
+}
+
+resource "google_project_iam_member" "pubsub-iam-pub" {
+  member  = "serviceAccount:${google_service_account.helpdesk_sa.email}"
+  project = var.project-id
+  role    = "roles/pubsub.publisher"
+}
+
+resource "google_project_iam_member" "logging-iam" {
+  member  = "serviceAccount:${google_service_account.helpdesk_sa.email}"
+  project = var.project-id
+  role    = "roles/logging.logWriter"
+}
