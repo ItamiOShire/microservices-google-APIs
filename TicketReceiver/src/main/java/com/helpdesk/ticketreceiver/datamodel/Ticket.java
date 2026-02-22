@@ -1,12 +1,11 @@
 package com.helpdesk.ticketreceiver.datamodel;
+import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.annotation.*;
 import com.google.cloud.spring.data.firestore.Document;
 import com.helpdesk.ticketreceiver.dto.TicketDto;
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDate;
 
 @Document(collectionName = "ticket")
 @Getter
@@ -27,9 +26,9 @@ public class Ticket {
 
     private String priority;
 
-    private LocalDate createdAt;
-
     private String assignedTo;
+
+    private Timestamp timestamp;
 
     public Ticket(){}
 
@@ -38,7 +37,8 @@ public class Ticket {
         this.subject = userTicket.getSubject();
         this.message = userTicket.getMessage();
         this.status = Status.NEW.toString();
-        this.createdAt = LocalDate.now();
+        this.email = userTicket.getEmail();
+        this.timestamp = Timestamp.now();
 
     }
 
