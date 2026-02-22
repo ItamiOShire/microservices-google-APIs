@@ -34,91 +34,77 @@ resource "google_service_account" "helpdesk_sa" {
   display_name = "helpdesk-account"
 }
 
-# VM
+# Cloud Run
 
-resource "google_compute_instance" "vm-ticket-receiver" {
-  name = "ticket-receiver-instance"
-  machine_type = "e2-small"
-  zone = var.zone
+resource "google_cloud_run_v2_service" "cloud-run-ticket-receiver" {
+  name = "ticket-receiver-service"
+  location = var.region
+  deletion_protection = false
+  ingress = "INGRESS_TRAFFIC_ALL"
 
-  boot_disk {
-    initialize_params {
-      image = "projects/cos-cloud/global/images/family/cos-stable"
+  template {
+
+    containers {
+      name = "ticket-receiver-container"
+      image = "europe-central2-docker.pkg.dev/${var.project-id}/microservices/${var.ticket-receiver-image-name}:latest"
+
+      ports {
+        container_port = 8080
+      }
+
+      env {
+        name = "TICKET-TOPIC-NAME"
+        value = var.ticket-topic
+      }
+
     }
-  }
 
-  network_interface {
-    network = "default"
-  }
-
-  metadata = {
-    google-loggin-enable = "true"
-    gce-container-declaration = <<-EOT
-      spec:
-        containers:
-          - name: ticket-receiver-service
-            image: "europe-central2-docker.pkg.dev/${var.project-id}/repo/${var.ticket-receiver-image-name}"
-            env:
-              -name: TICKET-TOPIC-NAME
-              value: "${var.ticket-topic}"
-            stdin: false
-            tty: false
-        restartPolicy: Always
-    EOT
+    service_account = google_service_account.helpdesk_sa.email
 
   }
-
-  service_account {
-    email = google_service_account.helpdesk_sa.email
-    scopes = ["cloud-platform"]
-  }
-
 }
 
-resource "google_compute_instance" "vm-notification-server" {
-  name = "notification-server-instance"
-  machine_type = "e2-small"
-  zone = var.zone
+resource "google_cloud_run_v2_service" "cloud-run-notification-server" {
+  name = "notification-server-service"
+  location = var.region
+  deletion_protection = false
+  ingress = "INGRESS_TRAFFIC_ALL"
 
-  boot_disk {
-    initialize_params {
-      image = "projects/cos-cloud/global/images/family/cos-stable"
+  template {
+
+    containers {
+      name = "notification-server-container"
+      image = "europe-central2-docker.pkg.dev/${var.project-id}/microservices/${var.notification-server-image-name}:latest"
+
+      ports {
+        container_port = 8080
+      }
+
+      env {
+        name = "NOTIFICATION-SUB-NAME"
+        value = var.notification-sub
+      }
+
+      env {
+        name = "CLIENT-ID"
+        value = var.client-id
+      }
+
+      env {
+        name = "CLIENT-SECRET"
+        value = var.client-secret
+      }
+
+      env {
+        name = "REFRESH-TOKEN"
+        value = var.refresh-token
+      }
+
     }
-  }
 
-  network_interface {
-    network = "default"
-    access_config {}
-  }
-
-  metadata = {
-    google-loggin-enable = "true"
-    gce-container-declaration = <<-EOT
-      spec:
-        containers:
-          - name: ticket-receiver-service
-            image: "europe-central2-docker.pkg.dev/${var.project-id}/repo/${var.ticket-receiver-image-name}"
-            env:
-              -name: NOTIFICATION-SUB-NAME
-              value: "${var.notification-sub}"
-              -name: CLIENT-ID
-              value: "${var.client-id}"
-              -name: CLIENT-SECRET
-              value: "${var.client-secret}"
-              -name: REFRESH-TOKEN
-              value: "${var.refresh-token}"
-            stdin: false
-            tty: false
-        restartPolicy: Always
-    EOT
+    service_account = google_service_account.helpdesk_sa.email
 
   }
-
-  service_account {
-    email = google_service_account.helpdesk_sa.email
-    scopes = ["cloud-platform"]
-  }
-
 }
 
 # IAM
@@ -145,4 +131,26 @@ resource "google_project_iam_member" "logging-iam" {
   member  = "serviceAccount:${google_service_account.helpdesk_sa.email}"
   project = var.project-id
   role    = "roles/logging.logWriter"
+}
+
+resource "google_project_iam_member" "artefact-registry" {
+  member = "serviceAccount:${google_service_account.helpdesk_sa.email}"
+  project = var.project-id
+  role = "roles/artifactregistry.reader"
+}
+
+resource "google_cloud_run_v2_service_iam_member" "ticket-receiver" {
+  member = "allUsers"
+  project = var.project-id
+  location = google_cloud_run_v2_service.cloud-run-ticket-receiver.location
+  name   = google_cloud_run_v2_service.cloud-run-ticket-receiver.name
+  role   = "roles/run.invoker"
+}
+
+resource "google_cloud_run_v2_service_iam_member" "notification-server" {
+  member = "allUsers"
+  project = var.project-id
+  location = google_cloud_run_v2_service.cloud-run-notification-server.location
+  name   = google_cloud_run_v2_service.cloud-run-notification-server.name
+  role   = "roles/run.invoker"
 }
