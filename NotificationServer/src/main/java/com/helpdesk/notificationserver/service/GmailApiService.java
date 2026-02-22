@@ -31,7 +31,7 @@ public class GmailApiService {
         try {
             Message message = messagesService.createAndEncodeEmail(emailData);
             Gmail gmail = googleApiConnectionService.getConnectionToGmail();
-            Message sentMessage = gmail.users().messages().send(emailData.getFromAddressEmail(), message).execute();
+            Message sentMessage = gmail.users().messages().send("me", message).execute();
 
             log.info("Sent message id: {}", sentMessage.getId());
             log.info("Message: {}", sentMessage.toPrettyString());
