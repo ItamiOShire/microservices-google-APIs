@@ -26,7 +26,7 @@ public class GmailApiService {
 
     public void sendEmail(
             EmailData emailData
-    ) {
+    ) throws Exception {
 
         try {
             Message message = messagesService.createAndEncodeEmail(emailData);
@@ -38,6 +38,7 @@ public class GmailApiService {
 
         } catch (Exception e) {
             log.error("Cannot create message or email: {}", e.getMessage());
+            throw new Exception(e.getMessage());
         }
 
     }
